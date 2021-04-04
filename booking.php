@@ -138,7 +138,7 @@ if(isset($_POST['insertdata'])){
     
 ?>
 
-  </div>
+</div>
 
   <button type="submit" class="btn btn-primary"  value="submit" name="insertdata">Submit</button>
 </form>
@@ -146,8 +146,71 @@ if(isset($_POST['insertdata'])){
 </div>
 
 <div id="room_booking" class="tabcontent">
-  <h1>Tokyo</h1>
-  <p>Tokyo is the capital of Japan.</p>
+<div class="container">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>"   method="POST">
+    <br>
+    <div class="form-group">
+  <span class="date">Check-in Date</span>
+    <input class="date-1" type="date" name="check-in-date" id="">
+    <span class="date">check-out Date</span>
+    <input class="date-1" type="date" name="check-out-date" >
+    </div>
+
+
+
+
+  
+<button type="submit" class="btn btn-primary"  value="submit" name="available_room">Submit</button>
+</form>
+
+<?php
+
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+} 
+if(isset($_POST['available_room'])){
+  $date = strtotime($_POST['check-in-date']);
+  
+  echo gettype($date);
+  
+  $sql = "CALL available_room($date)";
+$result = $conn->query($sql);
+
+        
+      
+?>
+  
+
+<table class="table table-striped table-dark table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Customer Name</th>
+                <th>Customer First Name</th>
+                <th>Customer Last Name</th>
+                <th>Customer Age</th>
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['room_no'] ?></th>
+                    <td><?php echo $r['floor_no'] ?></td>
+                    <td><?php echo $r['features'] ?></td>
+                    <td><?php echo $r['amount'] ?></td>
+                   
+                </tr>
+            <?php endwhile; 
+			?>
+            </tbody>
+        </table>
+<?php } ?>
+        
+
+</div> 
+</div>
+
 </div>
 
 <div id="payment" class="tabcontent">
