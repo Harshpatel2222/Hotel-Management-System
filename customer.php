@@ -132,7 +132,7 @@ $result = $conn->query($sql);
           <div class="col-sm">
           <p class="price"><?php echo $row["amount"] ?>/- Per Day</p>
           <p class="text"><?php echo $row["room_name"] ?> Room</p>
-          <?php $conn->close(); ?>
+          <?php    ?>
           <button onclick="location.href='register.php'" type="button" class="book-button">Book Now</button>
           </div>
         </div>

@@ -73,7 +73,7 @@ body {font-family: "Lato", sans-serif;}
 
 <div id="personal_info" class="tabcontent">
 <div class="container">
-<form action="booking.php" method="POST">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
     <br>
   <div class="form-group">
     <label for="first_name">First Name</label>
@@ -132,22 +132,24 @@ if(isset($_POST['insertdata'])){
       header('Location:booking.php');
   }
   else{
+    
       echo '<script> alert("Data Not Saved"); </script>';
+      header('Location:booking.php');
   }
 }
-    
+$conn->close();
 ?>
 
 </div>
 
-  <button type="submit" class="btn btn-primary"  value="submit" name="insertdata">Submit</button>
+  <button type="submit" class="btn btn-primary"  value="submit" name="insertdata" >Submit</button>
 </form>
 </div> 
 </div>
 
 <div id="room_booking" class="tabcontent">
 <div class="container">
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>"   method="POST">
+<form action="booking.php"   method="POST">
     <br>
     <div class="form-group">
   <span class="date">Check-in Date</span>
@@ -161,6 +163,7 @@ if(isset($_POST['insertdata'])){
 
   
 <button type="submit" class="btn btn-primary"  value="submit" name="available_room">Submit</button>
+
 </form>
 
 <?php
@@ -173,17 +176,18 @@ if ($conn->connect_error) {
 } 
 if(isset($_POST['available_room'])){
   $date = strtotime($_POST['check-in-date']);
-  
-  echo gettype($date);
-  
-  $sql = "CALL available_room($date)";
+  // echo $date;
+  $d= date('Y-m-d', $date ); 
+  // echo gettype($d); 
+  // echo $d;
+  $sql = "CALL available_room('$d')";
 $result = $conn->query($sql);
 
         
       
 ?>
   
-
+<br>  
 <table class="table table-striped table-dark table-bordered">
           <thead class="thead-dark"><tr>
                 <th>Customer Name</th>
@@ -205,18 +209,160 @@ $result = $conn->query($sql);
 			?>
             </tbody>
         </table>
-<?php } ?>
-        
+<?php } $conn->close();?>
+      
+<!-- Room no book -->
+
+<form action="booking.php" method="post">
+  <span>Enter the room which you want to book: </span>
+  <input type="text" name="room_no" id="">
+
+  <div class="form-group">
+  <span class="date">Check-in Date</span>
+    <input class="date-1" type="date" name="check-in" >
+    <span class="date">check-out Date</span>
+    <input class="date-1" type="date" name="check-out" >
+    </div>
+
+  <button type="submit" class="btn btn-primary"  value="submit" name="book">Submit</button>
+</form>
+
+<?php
+
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+} 
+  
+
+if(isset($_POST['book'])){
+  $date = strtotime($_POST['check-in']);
+  $checkin= date('Y-m-d', $date ); 
+  $date1 = strtotime($_POST['check-out']);
+  $checkout= date('Y-m-d', $date1 );
+  $room_no=$_POST['room_no'];
+
+  $username=htmlspecialchars($_SESSION["username"]);
+  $sql = "SELECT customer_id FROM customer where username='$username'";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$customer_id = $row["customer_id"];
+// $sql = "CALL get_customer_id_p('$username')";  
+// $result = $conn->query($sql);
+// $row = $result->fetch_assoc();
+// $customer_id = $row["customer_id"]; 
+// echo $customer_id;
+// echo gettype($customer_id);
+   $query = "INSERT INTO room_booked (`customer_id`,`check_in`,`check_out`,`room_no`) VALUES ('$customer_id','$checkin','$checkout','$room_no')";
+   $query_run=mysqli_query($conn,$query);
+
+   if($query_run){
+      echo '<script> alert("Data Saved"); </script>';
+
+  }
+  else{
+    
+      echo '<script> alert("Data Not Saved"); </script>';
+      
+  }
+}
+$conn->close();
+?>
+
 
 </div> 
 </div>
 
 </div>
 
+
+<!-- Payment Section -->
 <div id="payment" class="tabcontent">
-  <h1>Oslo</h1>
-  <p>Oslo is the capital of Norway.</p>
+<div class="container">
+
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$username=htmlspecialchars($_SESSION["username"]);
+  $sql = "SELECT customer_id FROM customer where username='$username'";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$customer_id = $row["customer_id"];
+
+$sql = "SELECT payment_status FROM booking where customer_id=$customer_id";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$status=$row["payment_status"];
+
+if($status==0){
+
+
+$sql = "SELECT amount FROM booking where customer_id=$customer_id AND payment_status=0";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$amount=$row["amount"];
+
+
+$sql = "CALL payment_info($customer_id)";
+$result = $conn->query($sql);
+
+        
+      
+?>
+  
+<br>  
+<table class="table table-striped table-dark table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Customer Name</th>
+                <th>Customer First Name</th>
+                <th>Customer Last Name</th>
+                <th>Customer Age</th>
+                <th>Customer Age</th>
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['room_no'] ?></th>
+                    <td><?php echo $r['check_in'] ?></td>
+                    <td><?php echo $r['check_out'] ?></td>
+                    <td><?php echo $r['features'] ?></td>
+                    <td><?php echo $r['amount'] ?></td>
+                   
+                </tr>
+            <?php endwhile; 
+			?>
+            </tbody>
+        </table>
+        <?php echo $amount ?>
+
+<?php } 
+else{ ?>
+  <h1> Done</h1>
+<?php }
+
+$conn->close();?>
+
+
+
+
+
 </div>
+</div>
+
+
+
 
 <script>
 function openCity(cityName,elmnt,color) {
