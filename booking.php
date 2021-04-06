@@ -298,26 +298,28 @@ $username=htmlspecialchars($_SESSION["username"]);
   $sql = "SELECT customer_id FROM customer where username='$username'";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
+if($row==NULL){
+
+}
+else{
 $customer_id = $row["customer_id"];
+
 
 $sql = "SELECT payment_status FROM booking where customer_id=$customer_id";
 $result = $conn->query($sql);
-$row = $result->fetch_assoc();
-$status=$row["payment_status"];
+while($row = $result->fetch_assoc()){
+
+$status=$row["payment_status"]; 
 
 if($status==0){
-
 
 $sql = "SELECT amount FROM booking where customer_id=$customer_id AND payment_status=0";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 $amount=$row["amount"];
 
-
 $sql = "CALL payment_info($customer_id)";
-$result = $conn->query($sql);
-
-        
+$result = $conn->query($sql);       
       
 ?>
   
@@ -345,15 +347,67 @@ $result = $conn->query($sql);
 			?>
             </tbody>
         </table>
+        <span>Total Amount: </span>
         <?php echo $amount ?>
 
-<?php } 
-else{ ?>
-  <h1> Done</h1>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<div class="form-group">
+  <label for="payment_method">Payment Method:</label>
+        <select name="payment_method" id="payment_method">
+    <option value="NET_BANKING">NET BANKING</option>
+    <option value="CASH">CASH</option>
+    <option value="UPI">UPI</option>
+    <option value="CREID_CARD">CREDIT CARD</option>
+    <option value="DEBIT_CARD">DEBIT CARD</option>
+  </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary"  value="submit" name="payment_done" >Submit</button>
+</form>
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+        if(isset($_POST['payment_done'])){
+          $sql = "SELECT booking_id,amount FROM booking where customer_id=$customer_id AND payment_status=0";
+          $result = $conn->query($sql);
+          $row = $result->fetch_assoc();
+          $amount=$row["amount"];
+          $booking_id=$row["booking_id"];
+
+$payment_method=$_POST['payment_method'];
+ 
+   $query = "INSERT INTO transaction (`booking_id`,`payment_type`,`total_amount`) VALUES ('$booking_id','$payment_method','$amount')";
+   $query_run=mysqli_query($conn,$query);
+
+   if($query_run){
+      echo '<script> alert("Data Saved"); </script>';
+      
+  }
+  else{
+    
+      echo '<script> alert("Data Not Saved"); </script>';
+      
+  }
+}
+
+?>
+  
 <?php }
+else{
+  ?>
+ <span>Done</span>
 
-$conn->close();?>
+<?php }}}
 
+mysqli_close($conn);?>
 
 
 
