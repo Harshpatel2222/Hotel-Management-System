@@ -244,6 +244,11 @@ if(isset($_POST['book'])){
   $checkout= date('Y-m-d', $date1 );
   $room_no=$_POST['room_no'];
 
+  $sql="SELECT DATEDIFF('$checkout','$checkin') AS days";
+  $result = $conn->query($sql);
+  $row = $result->fetch_assoc();
+  // echo $row["days"];
+  $days=$row["days"];
   $username=htmlspecialchars($_SESSION["username"]);
   $sql = "SELECT customer_id FROM customer where username='$username'";
 $result = $conn->query($sql);
@@ -255,7 +260,7 @@ $customer_id = $row["customer_id"];
 // $customer_id = $row["customer_id"]; 
 // echo $customer_id;
 // echo gettype($customer_id);
-   $query = "INSERT INTO room_booked (`customer_id`,`check_in`,`check_out`,`room_no`) VALUES ('$customer_id','$checkin','$checkout','$room_no')";
+   $query = "INSERT INTO room_booked (`customer_id`,`check_in`,`check_out`,`total_days`,`room_no`) VALUES ('$customer_id','$checkin','$checkout','$days','$room_no')";
    $query_run=mysqli_query($conn,$query);
 
    if($query_run){
@@ -326,11 +331,12 @@ $result = $conn->query($sql);
 <br>  
 <table class="table table-striped table-dark table-bordered">
           <thead class="thead-dark"><tr>
-                <th>Customer Name</th>
-                <th>Customer First Name</th>
-                <th>Customer Last Name</th>
-                <th>Customer Age</th>
-                <th>Customer Age</th>
+                <th>Room No</th>
+                <th>Check-In-Date</th>
+                <th>Check-out-Date</th>
+                <th>Total Days</th>
+                <th>Features</th>
+                <th>Price Per Day</th>
             </tr></thead>
             
             <tbody>
@@ -339,6 +345,7 @@ $result = $conn->query($sql);
                   <th scope="row"><?php echo $r['room_no'] ?></th>
                     <td><?php echo $r['check_in'] ?></td>
                     <td><?php echo $r['check_out'] ?></td>
+                    <td><?php echo $r['total_days'] ?></td>
                     <td><?php echo $r['features'] ?></td>
                     <td><?php echo $r['amount'] ?></td>
                    

@@ -40,15 +40,66 @@
     <p class="text-2">A Best Place To Stay</p>
   </section>
   <!-- Check Avability -->
+  <form action="customer.php"   method="POST">
   <div class="container check">
     <span class="date">Check-in Date</span>
     <input class="date-1" type="date" name="check-in-date" id="">
     <span class="date">check-out Date</span>
     <input class="date-1" type="date" name="check-out-date" id="">
-    <button class="check-button" type="submit">Check Avability</button>
-    
+    <button class="check-button" type="submit" name="available_room">Check Avability</button>
+    </form>
   </div>
+  <div class="container">
+  <?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+} 
+if(isset($_POST['available_room'])){
+  $date = strtotime($_POST['check-in-date']);
+  // echo $date;
+  $d= date('Y-m-d', $date ); 
+  // echo gettype($d); 
+  // echo $d;
+  $sql = "CALL available_room('$d')";
+$result = $conn->query($sql);
+
+        
+      
+?>
   
+<br>  
+<table class="table table-striped table-light table-bordered" >
+          <thead class="thead-dark"><tr>
+                <th>Room No</th>
+                <th>Floor No</th> 
+                <th>Features</th>
+                <th>Price Per Day</th>
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['room_no'] ?></th>
+                    <td><?php echo $r['floor_no'] ?></td>
+                    <td><?php echo $r['features'] ?></td>
+                    <td><?php echo $r['amount'] ?></td>
+                   
+                </tr>
+            <?php endwhile; 
+			?>
+            </tbody>
+        </table>
+<?php } $conn->close();?>
+  
+</div>
+
   <?php
 $servername = "localhost";
 $username = "root";
