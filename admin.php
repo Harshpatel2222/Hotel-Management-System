@@ -11,7 +11,8 @@
         <!-- ===== CSS ===== -->
         <link rel="stylesheet" href="assets/css/styles.css">
         
-
+        <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>  
+        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> 
         <title>Sidebar menu responsive</title>
     </head>
     <body id="body-pd">
@@ -41,21 +42,27 @@
                         </a>
 
                         <a href="#" class="nav__link tablink" onclick="openCity('add_new_room', this, 'blue')">
-                            <i class='bx bx-user nav__icon' ></i>
+                            <!-- <i class='bx bx-user nav__icon' ></i> -->
+                            <i class="iconify" data-icon="fluent:conference-room-28-regular" data-inline="false"></i>
                             <span class="nav__name">Add New Room</span>
                         </a>
+
+                        <a href="#" class="nav__link tablink" onclick="openCity('all_room_info', this, 'blue')">
+                            <i class='far fa-address-book nav__icon' ></i>
+                            <span class="nav__name">All Room Info</span>
+                        </a>
                         
-                        <!-- <a href="#" class="nav__link">
-                            <i class='bx bx-message-square-detail nav__icon' ></i>
-                            <span class="nav__name">Messages</span>
+                         <a href="#" class="nav__link tablink" onclick="openCity('customer_info', this, 'blue')">
+                            <i class='far fa-user nav__icon' ></i>
+                            <span class="nav__name">Customer Info</span>
                         </a>
 
-                        <a href="#" class="nav__link">
+                        <a href="#" class="nav__link tablink" onclick="openCity('customer_info', this, 'blue')">
                             <i class='bx bx-bookmark nav__icon' ></i>
-                            <span class="nav__name">Favorites</span>
+                            <span class="nav__name">Update Room Info</span>
                         </a>
 
-                        <a href="#" class="nav__link">
+                        <!--<a href="#" class="nav__link">
                             <i class='bx bx-folder nav__icon' ></i>
                             <span class="nav__name">Data</span>
                         </a>
@@ -63,7 +70,7 @@
                         <a href="#" class="nav__link">
                             <i class='bx bx-bar-chart-alt-2 nav__icon' ></i>
                             <span class="nav__name">Analytics</span>
-                        </a> -->
+                        </a>  -->
                     </div>
                 </div>
 
@@ -79,6 +86,7 @@
     <h1>Welcome To Admin Page</h1>
   </div>
   
+  <!-- Booked Room -->
   <div id="booked_room" class="tabcontent">
   <?php
 $servername = "localhost";
@@ -93,8 +101,8 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 $sql = "CALL showing_booked_room_info_to_admin()";
-$result = $conn->query($sql);       
-      
+$result = $conn->query($sql);   
+   
 ?>
   
 <br>  
@@ -122,16 +130,20 @@ $result = $conn->query($sql);
 			$conn->close(); ?>
             </tbody>
         </table>
+
   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-    <div>
-    <span>Room NO:</span>
-    <input type="text" name="room_no" id="">
-    </div>
-    <div>
-    <span>Check-out-date:</span>
-    <input type="text" name="check_out" id="">            
-    </div>
-  <button type="submit" class="btn btn-primary"  value="submit" name="delete" >Submit</button>
+  <div class="form-group">
+    <label >Enter Room No and Check-out-date to cancel Booked Room.</label>
+   </div>  
+  <div class="form-group">
+    <label for="room_no">Room No:</label>
+    <input type="text" name="room_no"  placeholder="Room No" >
+   </div>  
+   <div class="form-group">
+    <label for="check_out">Check-out-date:</label>
+    <input type="text" name="check_out"  placeholder="Check-out-date" >
+   </div>  
+  <button type="submit" class="btn btn-primary"  value="submit" name="delete" >Cancel Booking</button>
   </form>
   <?php
   $servername = "localhost";
@@ -172,9 +184,9 @@ $conn->close();
     </div>
 
     
-  
+  <!-- Add new Room -->
   <div id="add_new_room" class="tabcontent">
-    <h1>Add details of the room to create new room</h1>
+    <h2>Add details of the room to create new room</h2>
     
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
     <div class="form-group">
@@ -184,20 +196,21 @@ $conn->close();
     <option value="222">Super Delux</option>
     <option value="222">Luxury</option>
   </select>
+</div>
     <div class="form-group">
-    <span>Room No</span>
+    <label for="room_no">Room No</label>
     <input type="text" name="room_no" id="">            
     </div>
     <div class="form-group">
-    <span>Floor No</span>
+    <label for="floor_no">Floor No</label>
     <input type="text" name="floor_no" id="">            
     </div>
     <div class="form-group">
-    <span>Features</span>
+    <label for="features">Features</label>
     <input type="text" name="features" id="">            
     </div>
     <div class="form-group">
-    <span>Price</span>
+    <label for="amount">Amount</label>
     <input type="text" name="amount" id="">            
     </div>
     
@@ -240,6 +253,187 @@ $conn->close();
   
 
   ?>
+
+  </div>
+
+
+  <!-- ALL Room Info -->
+  <div id="all_room_info" class="tabcontent">
+  <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$sql = "CALL showing_all_room_info_to_admin()";
+$result = $conn->query($sql);   
+   
+?>
+  
+<br>  
+<table class="table table-striped table-light table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Room No</th>
+                <th>Floor No</th>
+                <th>Room name</th>
+                <th>No of Single Bed</th>
+                <th>No of Double Bed</th>
+                <th>No of Accomodate</th>
+                <th>Features</th>
+                <th>Price Per Day</th>
+                
+                
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['room_no'] ?></th>
+                    <td><?php echo $r['floor_no'] ?></td>
+                    <td><?php echo $r['room_name'] ?></td>
+                    <td><?php echo $r['no_of_single_bed'] ?></td>
+                    <td><?php echo $r['no_of_double_bed'] ?></td>
+                    <td><?php echo $r['no_of_accomodate'] ?></td>
+                    <td><?php echo $r['features'] ?></td>
+                    <td><?php echo $r['amount'] ?></td>
+                    
+                   
+                </tr>
+            <?php endwhile; 
+			$conn->close(); ?>
+            </tbody>
+        </table>
+  </div>
+
+  <!-- Customer Info -->
+
+  <div id="customer_info" class="tabcontent">
+  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">  
+  <h2>Enter customer ID to show customer deatils</h2>
+    <div class="form-group">
+    <label for="customer_id">Customer ID</label>
+    <input type="text" name="customer_id" id="">            
+    </div>
+    <a href="#" class="nav__link tablink" ><button type="submit" class="btn btn-primary"  value="submit" name="show" >Show</button></a>
+  </form>
+
+  <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['show'])){
+  $customer_id= $_POST['customer_id'];
+$sql = "CALL showing_customer_details_to_admin($customer_id)";
+$result = $conn->query($sql);   
+   
+?>
+  
+<br>  
+<table class="table table-striped table-light table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Customer ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Contact No</th>
+                <th>Nationality</th>
+                <th>Username</th>
+                
+                
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['customer_id'] ?></th>
+                    <td><?php echo $r['first_name'] ?></td>
+                    <td><?php echo $r['last_name'] ?></td>
+                    <td><?php echo $r['gender'] ?></td>
+                    <td><?php echo $r['email'] ?></td>
+                    <td><?php echo $r['contact_no'] ?></td>
+                    <td><?php echo $r['nationality'] ?></td>
+                    <td><?php echo $r['username'] ?></td>
+                    
+                   
+                </tr>
+            <?php endwhile; 
+			$conn->close(); } ?>
+            </tbody>
+        </table>
+
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">  
+        <br>
+        <button type="submit" class="btn btn-primary"  value="submit" name="show_all" >Show All Customer Details</button>
+        </form>
+
+        <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['show_all'])){
+  
+$sql = "CALL showing_all_customer_details_to_admin()";
+$result = $conn->query($sql);   
+   
+?>
+  
+<br>  
+<table class="table table-striped table-light table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Customer ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Contact No</th>
+                <th>Nationality</th>
+                <th>Username</th>
+                
+                
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['customer_id'] ?></th>
+                    <td><?php echo $r['first_name'] ?></td>
+                    <td><?php echo $r['last_name'] ?></td>
+                    <td><?php echo $r['gender'] ?></td>
+                    <td><?php echo $r['email'] ?></td>
+                    <td><?php echo $r['contact_no'] ?></td>
+                    <td><?php echo $r['nationality'] ?></td>
+                    <td><?php echo $r['username'] ?></td>
+                    
+                   
+                </tr>
+            <?php endwhile; 
+			$conn->close(); } ?>
+            </tbody>
+        </table>
+
 
   </div>
   

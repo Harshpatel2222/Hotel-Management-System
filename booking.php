@@ -8,72 +8,169 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style>
-        body{ font: 14px sans-serif; text-align: center; }
-    </style>
-    <style>
-body {font-family: "Lato", sans-serif;}
+        <!-- ===== BOX ICONS ===== -->
+        <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
 
-.tablink {
-  background-color: #555;
-  color: white;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  font-size: 17px;
-  width: 25%;
-}
+        <!-- ===== CSS ===== -->
+        <link rel="stylesheet" href="assets/css/styles.css">
+        
+        <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+        <title>Sidebar menu responsive</title>
+    </head>
+    <body id="body-pd">
+        <header class="header" id="header">
+            <div class="header__toggle">
+                <i class='bx bx-menu' id="header-toggle"></i>
+            </div>
 
-.tablink:hover {
-  background-color: #777;
-}
+            <!-- <div class="header__img">
+                <img src="assets/img/admin.jfif" alt="Admin">
+            </div> -->
+        </header>
 
-/* Style the tab content */
-.tabcontent {
-  color: white;
-  display: none;
-  padding: 50px;
-  text-align: center;
-}
+        <div class="l-navbar" id="nav-bar">
+            <nav class="nav">
+                <div>
+                    <div class="nav__list">
+                    <a href="#" class="nav__link active tablink" onclick="openCity('home', this, 'blue')" id="defaultOpen">
+                        <i class='bx bx-layer nav__logo-icon'></i>
+                        <span class="nav__logo-name">Home</span>
+                    </a>
 
-#home {background-color:red;}
-#personal_info {background-color:green;}
-#room_booking {background-color:blue;}
-#payment {background-color:orange;}
-</style>
-</head>
-<body>
+                    
+                        <a href="#" class="nav__link tablink" onclick="openCity('personal_info', this, 'blue')">
+                        <i class='bx bx-user nav__icon' ></i>
+                            <span class="nav__name">Personal Info</span>
+                        </a>
 
-<div class="content">
+                        <a href="#" class="nav__link tablink" onclick="openCity('room_booking', this, 'blue')">
+                        <i class="iconify" data-icon="uil:calender" data-inline="false"></i>
+                            <span class="nav__name">Book Room</span>
+                        </a>
+
+                        <a href="#" class="nav__link tablink" onclick="openCity('payment', this, 'blue')">
+                        <i class="iconify" data-icon="fluent:payment-16-regular" data-inline="false"></i>
+                            <span class="nav__name">Payment</span>
+                        </a>
+                        
+                        <a href="reset-password.php" class="btn nav__link">
+                    <i class="iconify icon:carbon:password icon-inline:false"></i>
+                    <span class="nav__name">Reset Password</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="logout.php" class="btn ml-3 nav__link">
+                    <i class='bx bx-log-out nav__icon' ></i>
+                    <span class="nav__name">Log Out</span>
+                </a>
+                
+            </nav>
+        </div>
+
+<!--Home Page  -->
+<div id="home" class="tabcontent">
+    <div class="content">
 <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to our site.</h1>
 </div>
-<p>
-        <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
-        <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
-    </p>
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
 
-<button class="tablink" onclick="openCity('home', this, 'red')" id="defaultOpen">Home</button>
-<button class="tablink" onclick="openCity('personal_info', this, 'green')">Personal Info</button>
-<button class="tablink" onclick="openCity('room_booking', this, 'blue')">Room Booking</button>
-<button class="tablink" onclick="openCity('payment', this, 'orange')">Payment</button>
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$username=htmlspecialchars($_SESSION["username"]);
+  $sql = "SELECT customer_id FROM customer where username='$username'";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+if($row==NULL){
+  echo "Please Enter your personal details first to proceed further.";
+}
+else{
+$customer_id = $row["customer_id"];
 
-<div id="home" class="tabcontent">
 
-</div>
+$sql = "SELECT payment_status FROM booking where customer_id=$customer_id";
+$result = $conn->query($sql);
 
+while($row = $result->fetch_assoc()){
+
+$status=$row["payment_status"]; 
+
+if($status==1){
+echo "Previous Booking Info";
+$sql = "CALL customer_previous_booking_info_with_payment_done($customer_id)";
+$result = $conn->query($sql);       
+      
+?>
+  
+<br>  
+<table class="table table-striped table-dark table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Room No</th>
+                <th>Check-In-Date</th>
+                <th>Check-out-Date</th>
+                <th>Total Days</th>
+                <th>Features</th>
+                <th>Price Per Day</th>
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['room_no'] ?></th>
+                    <td><?php echo $r['check_in'] ?></td>
+                    <td><?php echo $r['check_out'] ?></td>
+                    <td><?php echo $r['total_days'] ?></td>
+                    <td><?php echo $r['features'] ?></td>
+                    <td><?php echo $r['amount'] ?></td>
+                   
+                </tr>
+            <?php endwhile; 
+			?>
+            </tbody>
+        </table>
+        <?php }
+      else{
+        echo "No Previous Booking";
+      }}} ?>
+  </div>
+  
+<!-- Personal Info Page-->
 <div id="personal_info" class="tabcontent">
-<div class="container">
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+        // Create connection
+        $conn = mysqli_connect($servername, $username, $password, $dbname);
+
+$username=htmlspecialchars($_SESSION["username"]);
+$sql = "SELECT customer_id FROM customer where username='$username'";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+
+if($row==NULL){
+?>
+
+    <div class="container">
+  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
     <br>
   <div class="form-group">
     <label for="first_name">First Name</label>
@@ -126,48 +223,163 @@ if(isset($_POST['insertdata'])){
      
    $query = "INSERT INTO customer (`first_name`,`last_name`,`gender`,`email`,`contact_no`,`nationality`,`username`) VALUES ('$first_name','$last_name','$gender','$email','$contact_no','$nationality','$username')";
    $query_run=mysqli_query($conn,$query);
+   
 
   if($query_run){
       echo '<script> alert("Data Saved"); </script>';
-      header('Location:booking.php');
+      // header('Location:booking.php');
   }
   else{
     
       echo '<script> alert("Data Not Saved"); </script>';
-      header('Location:booking.php');
+     
   }
 }
-$conn->close();
+
 ?>
 
 </div>
 
   <button type="submit" class="btn btn-primary"  value="submit" name="insertdata" >Submit</button>
 </form>
-</div> 
 </div>
+    
+    <?php
+  }
+  elseif(isset($_POST['update'])){
+    ?>
+  
+      <div class="container">
+    <form action="booking.php" method="POST">
+      <br>
+    <div class="form-group">
+      <label for="first_name">First Name</label>
+      <input type="text" class="form-control" id="first_name"  placeholder="First Name" name="first_name">
+    </div>
+    <div class="form-group">
+      <label for="last_name">Last Name</label>
+      <input type="text" class="form-control" id="last_name" placeholder="Last Name" name="last_name">
+    </div>
+    <div class="form-group">
+    <label for="gender">Gender:</label>
+          <select name="gender" id="Gender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+    </div>
+    <div class="form-group">
+      <label for="contact_no">Contact No</label>
+      <input type="text" class="form-control" id="contact_no" placeholder="Contact No" name="contact_no">
+    </div>
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email"  placeholder="Enter email" name="email">
+    </div>
+    <div class="form-group">
+    <label for="nationality">Nationality:</label>
+          <select name="nationality" id="nationality">
+      <option value="indian">Indian</option>
+      <option value="non_indian">Non Indian</option>
+    </select>
+  
+    
+  
+  </div>
+  
+    <button type="submit" class="btn btn-primary"  value="submit" name="updated" >Update</button>
+    <button type="submit" class="btn btn-secondary"  value="submit" name="cancel" >Cancel</button>
 
-<div id="room_booking" class="tabcontent">
-<div class="container">
-<form action="booking.php"   method="POST">
+  </form>
+  </div>
+      
+      <?php
+  }
+  elseif(isset($_POST['cancel'])){
+    header('Location:booking.php');
+  }
+  else{
+    echo "You have already submitted your personal information.";
+    ?>
+    <br>
+    <br>
+    <span>If you want to update your information than click on the update button.</span>
+    <br>
+    <br>
+    <form action="booking.php" method="post">
+    <button type="submit" class="btn btn-primary"  value="submit" name="update" >Update</button>
+    </form>
+  <?php
+}
+$conn->close();
+  ?>
+
+<?php
+  
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "hotel-mangement-system";
+          // Create connection
+          $conn = mysqli_connect($servername, $username, $password, $dbname);
+  
+  if(isset($_POST['updated'])){
+    $first_name=$_POST['first_name'];
+    $last_name=$_POST['last_name'];
+    $gender=$_POST['gender'];
+    $email=$_POST['email'];
+    $contact_no=$_POST['contact_no']; 
+    $nationality=$_POST['nationality'];
+    $username=htmlspecialchars($_SESSION["username"]);
+       
+     $query = "CALL update_customer_info('$first_name','$last_name','$gender','$email','$contact_no','$nationality','$username')";
+     $query_run=mysqli_query($conn,$query);
+     
+  
+    if($query_run){
+        echo '<script> alert("Data Saved"); </script>';
+        // header('Location:booking.php');
+    }
+    else{
+      
+        echo '<script> alert("Data Not Saved"); </script>';
+       
+    }
+  }
+  $conn->close();
+  ?>
+  
+  </div>    
+  <!--Room Booking -->
+  <div id="room_booking" class="tabcontent">
+  <form action="booking.php"   method="POST">
     <br>
     <div class="form-group">
+    <label>Check Avability</label>
+  </div>
+  <div class="form-group">
+    <label for="date">Check-in Date</label>
+    <input class="date-1" type="date" name="check-in-date"  placeholder="Check-in Date" >
+  <!-- </div>
+  <div class="form-group"> -->
+    <label for="date">check-out Date</label>
+    <input class="date-1" type="date" name="check-out-date"  placeholder="Check-out Date" >
+  </div>
+    <!-- <div class="form-group">
   <span class="date">Check-in Date</span>
     <input class="date-1" type="date" name="check-in-date" id="">
     <span class="date">check-out Date</span>
     <input class="date-1" type="date" name="check-out-date" >
-    </div>
-
-
-
-
-  
-<button type="submit" class="btn btn-primary"  value="submit" name="available_room">Submit</button>
+    </div> -->
+<button type="submit" class="btn btn-primary"  value="submit" name="available_room">Check Avability</button>
 
 </form>
 
 <?php
-
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
@@ -211,20 +423,34 @@ $result = $conn->query($sql);
         </table>
 <?php } $conn->close();?>
       
-<!-- Room no book -->
+<!--  Book by room no -->
 
 <form action="booking.php" method="post">
-  <span>Enter the room which you want to book: </span>
-  <input type="text" name="room_no" id="">
-
+  <!-- <span>Enter the room which you want to book: </span>
+  <input type="text" name="room_no" id=""> -->
+<hr>  
   <div class="form-group">
+    <label >Room Booking</label>
+  </div>
+  <div class="form-group">
+    <label for="room_no">Enter the Room No which you wnat to book:</label>
+    <input  type="text" name="room_no"  placeholder="Room No" >
+  <div class="form-group">
+    <label for="date">Check-in Date</label>
+    <input class="date-1" type="date" name="check-in"  placeholder="Check-in Date" >
+  <!-- </div>
+  <div class="form-group"> -->
+    <label for="date">check-out Date</label>
+    <input class="date-1" type="date" name="check-out"  placeholder="Check-out Date" >
+  </div>
+  <!-- <div class="form-group">
   <span class="date">Check-in Date</span>
     <input class="date-1" type="date" name="check-in" >
     <span class="date">check-out Date</span>
     <input class="date-1" type="date" name="check-out" >
-    </div>
+    </div> -->
 
-  <button type="submit" class="btn btn-primary"  value="submit" name="book">Submit</button>
+  <button type="submit" class="btn btn-primary"  value="submit" name="book">Book</button>
 </form>
 
 <?php
@@ -249,13 +475,14 @@ if(isset($_POST['book'])){
   $row = $result->fetch_assoc();
   // echo $row["days"];
   $days=$row["days"];
+
   $username=htmlspecialchars($_SESSION["username"]);
   $sql = "SELECT customer_id FROM customer where username='$username'";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 $customer_id = $row["customer_id"];
 // $sql = "CALL get_customer_id_p('$username')";  
-// $result = $conn->query($sql);
+// $result = $conn->query($sql);    
 // $row = $result->fetch_assoc();
 // $customer_id = $row["customer_id"]; 
 // echo $customer_id;
@@ -278,16 +505,14 @@ $conn->close();
 
 
 </div> 
-</div>
+  </div>
 
-</div>
+  <!-- Payment Section -->
 
+  <div id="payment" class="tabcontent">
 
-<!-- Payment Section -->
-<div id="payment" class="tabcontent">
-<div class="container">
-
-<?php
+  
+  <?php
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -304,11 +529,10 @@ $username=htmlspecialchars($_SESSION["username"]);
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 if($row==NULL){
-
+   
 }
 else{
 $customer_id = $row["customer_id"];
-
 
 $sql = "SELECT payment_status FROM booking where customer_id=$customer_id";
 $result = $conn->query($sql);
@@ -317,7 +541,9 @@ while($row = $result->fetch_assoc()){
 $status=$row["payment_status"]; 
 
 if($status==0){
-
+  ?>
+  <h2> Booked Room</h2>
+<?php
 $sql = "SELECT amount FROM booking where customer_id=$customer_id AND payment_status=0";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
@@ -354,8 +580,11 @@ $result = $conn->query($sql);
 			?>
             </tbody>
         </table>
+        <div>
         <span>Total Amount: </span>
         <?php echo $amount ?>
+        </div>
+        <br>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="form-group">
@@ -369,7 +598,7 @@ $result = $conn->query($sql);
   </select>
   </div>
 
-  <button type="submit" class="btn btn-primary"  value="submit" name="payment_done" >Submit</button>
+  <button type="submit" class="btn btn-primary"  value="submit" name="payment_done" >Pay</button>
 </form>
 <?php
 $servername = "localhost";
@@ -409,45 +638,34 @@ $payment_method=$_POST['payment_method'];
   
 <?php }
 else{
-  ?>
- <span>Done</span>
-
-<?php }}}
+   }}}
 
 mysqli_close($conn);?>
+  
+  </div>
 
-
-
-
-</div>
-</div>
-
-
-
-
-<script>
-function openCity(cityName,elmnt,color) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].style.backgroundColor = "";
-  }
-  document.getElementById(cityName).style.display = "block";
-  elmnt.style.backgroundColor = color;
-
-}
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-</script>   
-    
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <!--===== MAIN JS =====-->
+        <script src="assets/js/main.js"></script>
+        <script>
+            function openCity(cityName,elmnt,color) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablink");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+              }
+              document.getElementById(cityName).style.display = "block";
+              elmnt.style.backgroundColor = color;
+            
+            }
+            // Get the element with id="defaultOpen" and click on it
+            document.getElementById("defaultOpen").click();
+            </script>
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-</body>
+    </body>
 </html>

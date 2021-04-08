@@ -78,7 +78,11 @@ $result = $conn->query($sql);
 <table class="table table-striped table-light table-bordered" >
           <thead class="thead-dark"><tr>
                 <th>Room No</th>
-                <th>Floor No</th> 
+                <th>Floor No</th>
+                <th>Room name</th>
+                <th>No of Single Beds</th>
+                <th>No of Double Beds</th>
+                <th>No of Accomodate</th> 
                 <th>Features</th>
                 <th>Price Per Day</th>
             </tr></thead>
@@ -88,6 +92,10 @@ $result = $conn->query($sql);
                 <tr>
                   <th scope="row"><?php echo $r['room_no'] ?></th>
                     <td><?php echo $r['floor_no'] ?></td>
+                    <td><?php echo $r['room_name'] ?></td>
+                    <td><?php echo $r['no_of_single_bed'] ?></td>
+                    <td><?php echo $r['no_of_double_bed'] ?></td>
+                    <td><?php echo $r['no_of_accomodate'] ?></td>
                     <td><?php echo $r['features'] ?></td>
                     <td><?php echo $r['amount'] ?></td>
                    
