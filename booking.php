@@ -226,12 +226,13 @@ if(isset($_POST['insertdata'])){
    
 
   if($query_run){
-      echo '<script> alert("Data Saved"); </script>';
+      echo '<script> alert("Personal Information Added."); </script>';
       // header('Location:booking.php');
   }
   else{
     
-      echo '<script> alert("Data Not Saved"); </script>';
+       echo "<script> alert('$conn->error'); </script>" ;
+      
      
   }
 }
@@ -342,7 +343,7 @@ $conn->close();
     }
     else{
       
-        echo '<script> alert("Data Not Saved"); </script>';
+        echo "<script> alert('$conn->error'); </script>";
        
     }
   }
@@ -388,12 +389,17 @@ if ($conn->connect_error) {
 } 
 if(isset($_POST['available_room'])){
   $date = strtotime($_POST['check-in-date']);
-  // echo $date;
-  $d= date('Y-m-d', $date ); 
-  // echo gettype($d); 
-  // echo $d;
-  $sql = "CALL available_room('$d')";
+  $check_in= date('Y-m-d', $date );
+  $date = strtotime($_POST['check-out-date']);
+  $check_out= date('Y-m-d', $date ); 
+  $sql = "CALL available_room('$check_in','$check_out')";
 $result = $conn->query($sql);
+
+     
+  
+    if($result){
+       
+   
 
         
       
@@ -421,7 +427,13 @@ $result = $conn->query($sql);
 			?>
             </tbody>
         </table>
-<?php } $conn->close();?>
+<?php 
+ }
+ else{
+   
+     echo "<script> alert('$conn->error'); </script>";
+    
+ }} $conn->close();?>
       
 <!--  Book by room no -->
 
@@ -491,12 +503,13 @@ $customer_id = $row["customer_id"];
    $query_run=mysqli_query($conn,$query);
 
    if($query_run){
-      echo '<script> alert("Data Saved"); </script>';
+      echo '<script> alert("Room Booked"); </script>';
 
   }
   else{
     
-      echo '<script> alert("Data Not Saved"); </script>';
+    echo "<script> alert('$conn->error'); </script>";
+  
       
   }
 }
@@ -584,7 +597,8 @@ $result = $conn->query($sql);
         <span>Total Amount: </span>
         <?php echo $amount ?>
         </div>
-        <br>
+        
+<br>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 <div class="form-group">
@@ -624,23 +638,72 @@ $payment_method=$_POST['payment_method'];
    $query_run=mysqli_query($conn,$query);
 
    if($query_run){
-      echo '<script> alert("Data Saved"); </script>';
+      echo '<script> alert("Payment Done"); </script>';
       
   }
   else{
     
-      echo '<script> alert("Data Not Saved"); </script>';
+      echo '<script> alert("Payment unsuccesful"); </script>';
       
   }
 }
 
 ?>
   
-<?php }
-else{
-   }}}
+<?php
 
 mysqli_close($conn);?>
+<hr>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+  <div class="form-group">
+    <label >Enter Room No and Check-out-date to cancel Booked Room.</label>
+   </div>  
+  <div class="form-group">
+    <label for="room_no">Room No:</label>
+    <input type="text" name="room_no"  placeholder="Room No" >
+   </div>  
+   <div class="form-group">
+    <label for="check_out">Check-out-date:</label>
+    <input type="text" name="check_out"  placeholder="Check-out-date" >
+   </div>  
+  <button type="submit" class="btn btn-primary"  value="submit" name="delete" >Cancel Booking</button>
+  </form>
+  <?php
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "hotel-mangement-system";
+  
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+  // Check connection
+  if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+  }
+  if(isset($_POST['delete'])){
+  $room_no = $_POST['room_no'];
+  $check_out = $_POST['check_out'];
+//   echo gettype($check_out);
+//   echo $check_out;
+  $sql = "CALL cancel_booked_room('$room_no','$check_out')";
+  $query_run=mysqli_query($conn,$sql);
+
+  if($query_run){
+      echo '<script> alert("booking cancellation done."); </script>';   
+      
+  }
+  else{
+    
+      echo "<script> alert('$conn->error'); </script>";
+     
+  }
+}
+$conn->close();   
+}
+else{
+   }   
+}}
+  ?>
   
   </div>
 

@@ -63,28 +63,29 @@ if ($conn->connect_error) {
 } 
 if(isset($_POST['available_room'])){
   $date = strtotime($_POST['check-in-date']);
-  // echo $date;
-  $d= date('Y-m-d', $date ); 
-  // echo gettype($d); 
-  // echo $d;
-  $sql = "CALL available_room('$d')";
+  $check_in= date('Y-m-d', $date );
+  $date = strtotime($_POST['check-out-date']);
+  $check_out= date('Y-m-d', $date ); 
+  $sql = "CALL available_room('$check_in','$check_out')";
 $result = $conn->query($sql);
+
+     
+  
+    if($result){
+       
+   
 
         
       
 ?>
   
 <br>  
-<table class="table table-striped table-light table-bordered" >
+<table class="table table-striped table-dark table-bordered">
           <thead class="thead-dark"><tr>
-                <th>Room No</th>
-                <th>Floor No</th>
-                <th>Room name</th>
-                <th>No of Single Beds</th>
-                <th>No of Double Beds</th>
-                <th>No of Accomodate</th> 
-                <th>Features</th>
-                <th>Price Per Day</th>
+                <th>Customer Name</th>
+                <th>Customer First Name</th>
+                <th>Customer Last Name</th>
+                <th>Customer Age</th>
             </tr></thead>
             
             <tbody>
@@ -92,10 +93,6 @@ $result = $conn->query($sql);
                 <tr>
                   <th scope="row"><?php echo $r['room_no'] ?></th>
                     <td><?php echo $r['floor_no'] ?></td>
-                    <td><?php echo $r['room_name'] ?></td>
-                    <td><?php echo $r['no_of_single_bed'] ?></td>
-                    <td><?php echo $r['no_of_double_bed'] ?></td>
-                    <td><?php echo $r['no_of_accomodate'] ?></td>
                     <td><?php echo $r['features'] ?></td>
                     <td><?php echo $r['amount'] ?></td>
                    
@@ -104,7 +101,13 @@ $result = $conn->query($sql);
 			?>
             </tbody>
         </table>
-<?php } $conn->close();?>
+<?php 
+ }
+ else{
+   
+     echo "<script> alert('$conn->error'); </script>";
+    
+ }} $conn->close();?>
   
 </div>
 
