@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -13,6 +14,8 @@
         
         <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>  
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> 
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
         <title>Sidebar menu responsive</title>
     </head>
     <body id="body-pd">
@@ -62,7 +65,15 @@
                             <span class="nav__name">Customer Info</span>
                         </a>
 
-                        
+                        <a href="#" class="nav__link tablink" onclick="openCity('employee', this, 'blue')">
+                            <i class='far fa-id-card nav__icon' ></i>
+                            <span class="nav__name">Employee</span>
+                        </a>
+
+                        <a href="#" class="nav__link tablink" onclick="openCity('employee_attendence', this, 'blue')">
+                            <i class='fas fa-fingerprint nav__icon' ></i>
+                            <span class="nav__name">Employee Attendence</span>
+                        </a>
 
                         <!--<a href="#" class="nav__link">
                             <i class='bx bx-folder nav__icon' ></i>
@@ -86,6 +97,28 @@
         
 <div id="admin" class="tabcontent">
     <h1>Welcome To Admin Page</h1>
+    
+        
+    <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+$sql = "CALL calculating_booked_room()";
+$result = $conn->query($sql); 
+$r = $result->fetch_array() ; 
+$booked=$r['booked'];
+
+?>
+
+
   </div>
   
   <!-- Booked Room -->
@@ -598,8 +631,255 @@ $result = $conn->query($sql);
             </tbody>
         </table>
   </div>
+
+<!-- Employee -->
+
+<div id="employee" class="tabcontent">
+<div class="container">
+<h2>Add New Employee</h2>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    <br>
+  <div class="form-group">
+    <label for="first_name">First Name</label>
+    <input type="text" class="form-control" id="first_name"  placeholder="First Name" name="first_name">
+  </div>
+  <div class="form-group">
+    <label for="last_name">Last Name</label>
+    <input type="text" class="form-control" id="last_name" placeholder="Last Name" name="last_name">
+  </div>
+  <div class="form-group">
+  <label for="gender">Gender:</label>
+        <select name="gender" id="Gender">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+  </select>
+  </div>
+  <div class="form-group">
+    <label for="contact_no">Contact No</label>
+    <input type="text" class="form-control" id="contact_no" placeholder="Contact No" name="contact_no">
+  </div>
+  <div class="form-group">
+    <label for="department">Department</label>
+    <input type="text" class="form-control" id="department" placeholder="Department" name="department">
+  </div>
+  <div class="form-group">
+    <label for="salary">Salary</label>
+    <input type="text" class="form-control" id="salary" placeholder="Salary" name="salary">
+  </div>
+  <button type="submit" class="btn btn-primary"  value="submit" name="insert_employee" >Add</button>
+<br>
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['insert_employee'])){
+  $first_name=$_POST['first_name'];
+  $last_name=$_POST['last_name'];
+  $gender=$_POST['gender'];
+  $contact_no=$_POST['contact_no']; 
+  $department=$_POST['department'];
+  $salary=$_POST['salary'];
   
+     
+   $query = "INSERT INTO employee (`first_name`,`last_name`,`gender`,`contact_no`,`department`,`salary`) VALUES ('$first_name','$last_name','$gender','$contact_no','$department','$salary')";
+   $query_run=mysqli_query($conn,$query);
+   
+
+  if($query_run){
+      echo '<script> alert("Personal Information Added."); </script>';
+      // header('Location:booking.php');
+  }
+  else{
+    
+       echo "<script> alert('$conn->error'); </script>" ;
+      
+     
+  }
+  $conn->close();
+}
+
+?>
+<!-- Show all employee -->
+
+    <br>
+    <button type="submit" class="btn btn-primary"  value="submit" name="show_employee" >Show All Employee Details</button>
+</form>
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['show_employee'])){
   
+$sql = "CALL show_all_employee_to_admin()";
+$result = $conn->query($sql);   
+   
+?>
+  
+<br>  
+<table class="table table-striped table-light table-bordered">
+          <thead class="thead-dark"><tr>
+                <th>Employee ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Contact No</th>
+                <th>Department</th>
+                <th>Salary Per Month</th>
+                
+                
+            </tr></thead>
+            
+            <tbody>
+            <?php while ($r = $result->fetch_array()): ?>
+                <tr>
+                  <th scope="row"><?php echo $r['employee_id'] ?></th>
+                    <td><?php echo $r['first_name'] ?></td>
+                    <td><?php echo $r['last_name'] ?></td>
+                    <td><?php echo $r['gender'] ?></td>
+                    <td><?php echo $r['contact_no'] ?></td>
+                    <td><?php echo $r['department'] ?></td>
+                    <td><?php echo $r['salary'] ?></td>
+                    
+                   
+                </tr>
+            <?php endwhile; 
+			$conn->close(); } ?>
+            </tbody>
+        </table>
+
+
+  </div>
+  </div>
+  
+  <!-- Employee Attendence -->
+  <div id="employee_attendence" class="tabcontent">
+  <div class="container">
+  <h2>Enter Employee ID to mark Attendence</h2>
+  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    <br>
+  <div class="form-group">
+    <label for="employee_id">Employee ID</label>
+    <input type="text" class="form-control" id="employee_id"  placeholder="Employee ID" name="employee_id">
+  </div>
+  <button type="submit" class="btn btn-primary"  value="submit" name="employee_attendence" >Add</button>
+  </form>
+  <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['employee_attendence'])){
+  $employee_id=$_POST['employee_id'];
+    
+   $query = "INSERT INTO employee_attendence (`employee_id`) VALUES ('$employee_id')";
+   $query_run=mysqli_query($conn,$query);
+   
+
+  if($query_run){
+      echo '<script> alert("Attendence Done."); </script>';
+      // header('Location:booking.php');
+  }
+  else{
+    
+       echo "<script> alert('$conn->error'); </script>" ;
+      
+     
+  }
+  $conn->close();
+}
+
+?>
+<br>
+<br>
+<br>
+<h2>Enter Date to show Employee Attendence</h2>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    <br>
+  <div class="form-group">
+    <label for="date">Date</label>
+    <input type="text" class="form-control" id="date"  placeholder="Date" name="date">
+  </div>
+  <button type="submit" class="btn btn-primary"  value="submit" name="show_attendence" >Show</button>
+  </form>
+  <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+} 
+if(isset($_POST['show_attendence'])){
+  $date = strtotime($_POST['date']);
+  $da= date('Y-m-d', $date );
+
+  $sql = "CALL show_attendence_of_employee('$da')";
+  $result = $conn->query($sql);
+    
+      if($result){
+  ?>
+    
+  <br>   
+  <table class="table table-striped table-light table-bordered">
+            <thead class="thead-dark"><tr>
+                  <th>Employee ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Department</th>
+                  
+                  
+              </tr></thead>
+              
+              <tbody>
+              <?php while ($r = $result->fetch_array()): ?>
+                  <tr>
+                    <th scope="row"><?php echo $r['employee_id'] ?></th>
+                      <td><?php echo $r['first_name'] ?></td>
+                      <td><?php echo $r['last_name'] ?></td>
+                      <td><?php echo $r['department'] ?></td>
+                      
+                     
+                  </tr>
+              <?php endwhile; 
+        $conn->close(); ?>
+              </tbody>
+          </table>
+  <?php 
+   }
+   else{
+     
+       echo "<script> alert('$conn->error'); </script>";
+      
+   }} ?>
+  </div>
+  </div>
 
         <!--===== MAIN JS =====-->
         <script src="assets/js/main.js"></script>
