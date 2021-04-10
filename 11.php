@@ -1,33 +1,52 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+
+$conn = new mysqli($servername, $username, $password, $dbname);?>  
 
 <html>
   <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
+      google.charts.setOnLoadCallback(drawChart1);
 
+      function drawChart1() {
         var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',   <?php echo "1" ?> ],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
-        ]);
+          ['Year', 'Sales', 'Expenses'],
+          <?php
+           
+           $sql = "SELECT sum(amount) AS loss,date from revenue where revenue_type='expense' group by date";
+           $result = $conn->query($sql);
+           
+         
+         $sql = "SELECT sum(amount) AS profit,date from revenue where revenue_type='income'  group by date";
+           $result1 = $conn->query($sql);
+            
+          
+        while($r = $result1->fetch_assoc()){
+            $rr = $result->fetch_assoc();
+echo "['".$r['date']."',".$r['profit'].",".$rr['loss']."],";
+}
+?> 
+]);
 
         var options = {
-          title: 'My Daily Activities'
+          title: 'Company Performance',
+          curveType: 'function',
+          legend: { position: 'bottom' }
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
       }
     </script>
   </head>
   <body>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
- 
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
   </body>
 </html>

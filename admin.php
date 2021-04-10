@@ -1,3 +1,13 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+
+$conn = new mysqli($servername, $username, $password, $dbname);?>   
+ 
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,6 +26,81 @@
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> 
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart1);
+      function drawChart1() {
+        var data = google.visualization.arrayToDataTable([
+          ['Day', 'Income', 'Expenses'],
+          <?php
+           
+           $sql = "SELECT sum(amount) AS loss,date from revenue where revenue_type='expense' group by date";
+           $result = $conn->query($sql);
+           
+         
+         $sql = "SELECT sum(amount) AS profit,date from revenue where revenue_type='income'  group by date";
+           $result1 = $conn->query($sql);
+            
+          
+        while($r = $result1->fetch_assoc()){
+            $rr = $result->fetch_assoc();
+echo "['".$r['date']."',".$r['profit'].",".$rr['loss']."],";
+}
+?> 
+]);
+
+        var options = {
+          title: 'Total Revenue',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Room Status', 'No of Room'],
+         <?php   $sql = "SELECT COUNT(check_out) AS booked from room_status where check_out>=CURRENT_DATE";
+
+$result = $conn->query($sql);
+  $r = $result->fetch_assoc();
+$booked=$r['booked'];
+$sql = "SELECT COUNT(check_out) AS non_booked from room_status where check_out<CURRENT_DATE";
+
+$result = $conn->query($sql);
+  $r = $result->fetch_assoc();
+$non_booked=$r['non_booked'];?>
+          
+          ['Booked Room',     <?php echo $booked ?>],
+          ['Available Room',      <?php echo $non_booked ?>]
+          
+        ]);
+
+        var options = {
+          title: 'Current Room Status'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+
+      
+
+
+
+    </script>
+  
         <title>Sidebar menu responsive</title>
     </head>
     <body id="body-pd">
@@ -75,6 +160,7 @@
                             <span class="nav__name">Employee Attendence</span>
                         </a>
 
+                       
                         <!--<a href="#" class="nav__link">
                             <i class='bx bx-folder nav__icon' ></i>
                             <span class="nav__name">Data</span>
@@ -97,29 +183,17 @@
         
 <div id="admin" class="tabcontent">
     <h1>Welcome To Admin Page</h1>
-    
-        
-    <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "hotel-mangement-system";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-$sql = "CALL calculating_booked_room()";
-$result = $conn->query($sql); 
-$r = $result->fetch_array() ; 
-$booked=$r['booked'];
-
-?>
-
-
+    <div class="row">
+    <div class="col-md-6">
+    <div id="piechart" style="width: 800px; height: 500px;"></div>
+    </div>
+    <div class="col-md-6">
+    <div id="curve_chart" style="width: 800px; height: 500px;"></div>
   </div>
+</div>   
+</div>
+    
+  
   
   <!-- Booked Room -->
   <div id="booked_room" class="tabcontent">
@@ -904,5 +978,6 @@ if(isset($_POST['show_attendence'])){
             <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     </body>
 </html>
