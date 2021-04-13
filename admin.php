@@ -160,6 +160,11 @@ $non_booked=$r['non_booked'];?>
                             <span class="nav__name">Employee Attendence</span>
                         </a>
 
+                        <a href="#" class="nav__link tablink" onclick="openCity('expenses', this, 'blue')">
+                            <i class='fas fa-hand-holding-usd nav__icon' ></i>
+                            <span class="nav__name">Add Expenses</span>
+                        </a>
+
                        
                         <!--<a href="#" class="nav__link">
                             <i class='bx bx-folder nav__icon' ></i>
@@ -738,7 +743,7 @@ $result = $conn->query($sql);
     <input type="text" class="form-control" id="department" placeholder="Department" name="department">
   </div>
   <div class="form-group">
-    <label for="salary">Salary</label>
+    <label for="salary">Salary Per Month</label>
     <input type="text" class="form-control" id="salary" placeholder="Salary" name="salary">
   </div>
   <button type="submit" class="btn btn-primary"  value="submit" name="insert_employee" >Add</button>
@@ -954,6 +959,60 @@ if(isset($_POST['show_attendence'])){
    }} ?>
   </div>
   </div>
+
+          
+<div id="expenses" class="tabcontent">
+<div class="container">
+    <h2>Add Expenses</h2>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    <br>
+  <div class="form-group">
+    <label for="expense_name">Name</label>
+    <input type="text" class="form-control" id="expense_name"  placeholder="Expense Name" name="expense_name">
+  </div>
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input type="text" class="form-control" id="amount"  placeholder="Amount" name="amount">
+  </div>
+  <button type="submit" class="btn btn-primary"  value="submit" name="add_expenses" >Add</button>
+  </form>
+  <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel-mangement-system";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if(isset($_POST['add_expenses'])){
+  $expense_name=$_POST['expense_name'];
+  $amount=$_POST['amount'];
+  $expense="expense";
+    
+   $query = "INSERT INTO revenue (`revenue_type`,`expense_name`,`amount`) VALUES ('$expense','$expense_name','$amount')";
+   $query_run=mysqli_query($conn,$query);
+   
+
+  if($query_run){
+      echo '<script> alert("Expense Added."); </script>';
+      // header('Location:booking.php');
+  }
+  else{
+    
+       echo "<script> alert('$conn->error'); </script>" ;
+      
+     
+  }
+  $conn->close();
+}
+
+?>
+</div>
+</div>
 
         <!--===== MAIN JS =====-->
         <script src="assets/js/main.js"></script>
