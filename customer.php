@@ -51,7 +51,6 @@
   </div>
   <div class="container">
   <?php
-
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -67,18 +66,9 @@ if(isset($_POST['available_room'])){
   $date = strtotime($_POST['check-out-date']);
   $check_out= date('Y-m-d', $date ); 
   $sql = "CALL available_room('$check_in','$check_out')";
-$result = $conn->query($sql);
-
-     
-  
-    if($result){
-       
-   
-
-        
-      
+$result = $conn->query($sql); 
+    if($result){        
 ?>
-  
 <br>  
 <table class="table table-striped table-light table-bordered">
           <thead class="thead-dark"><tr>
@@ -90,8 +80,6 @@ $result = $conn->query($sql);
                 <th>No of Accomodate</th>
                 <th>Features</th>
                 <th>Price Per Day</th>
-                
-                
             </tr></thead>
             
             <tbody>
@@ -105,8 +93,6 @@ $result = $conn->query($sql);
                     <td><?php echo $r['no_of_accomodate'] ?></td>
                     <td><?php echo $r['features'] ?></td>
                     <td><?php echo $r['amount'] ?></td>
-                    
-                   
                 </tr>
             <?php endwhile; 
 			 ?>
@@ -115,11 +101,8 @@ $result = $conn->query($sql);
 <?php 
  }
  else{
-   
      echo "<script> alert('$conn->error'); </script>";
-    
  }} $conn->close();?>
-  
 </div>
 
   <?php

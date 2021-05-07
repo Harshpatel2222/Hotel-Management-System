@@ -102,8 +102,6 @@ if($row==NULL){
 }
 else{
 $customer_id = $row["customer_id"];
-
-
 $sql = "SELECT payment_status FROM booking where customer_id=$customer_id";
 $result = $conn->query($sql);
 
@@ -153,7 +151,6 @@ $result = $conn->query($sql);
 <!-- Personal Info Page-->
 <div id="personal_info" class="tabcontent">
 <?php
-
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -165,7 +162,6 @@ $username=htmlspecialchars($_SESSION["username"]);
 $sql = "SELECT customer_id FROM customer where username='$username'";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
-
 if($row==NULL){
 ?>
 
@@ -202,9 +198,7 @@ if($row==NULL){
     <option value="indian">Indian</option>
     <option value="non_indian">Non Indian</option>
   </select>
-
   <?php
-
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -223,20 +217,15 @@ if(isset($_POST['insertdata'])){
      
    $query = "INSERT INTO customer (`first_name`,`last_name`,`gender`,`email`,`contact_no`,`nationality`,`username`) VALUES ('$first_name','$last_name','$gender','$email','$contact_no','$nationality','$username')";
    $query_run=mysqli_query($conn,$query);
-   
 
   if($query_run){
       echo '<script> alert("Personal Information Added."); </script>';
       // header('Location:booking.php');
   }
   else{
-    
-       echo "<script> alert('$conn->error'); </script>" ;
-      
-     
+       echo "<script> alert('$conn->error'); </script>" ;   
   }
 }
-
 ?>
 
 </div>
@@ -316,7 +305,6 @@ $conn->close();
   ?>
 
 <?php
-  
   $servername = "localhost";
   $username = "root";
   $password = "";
@@ -344,7 +332,6 @@ $conn->close();
     else{
       
         echo "<script> alert('$conn->error'); </script>";
-       
     }
   }
   $conn->close();
@@ -466,25 +453,15 @@ $result = $conn->query($sql);
     <label for="date">check-out Date</label>
     <input class="date-1" type="date" name="check-out"  placeholder="Check-out Date" >
   </div>
-  <!-- <div class="form-group">
-  <span class="date">Check-in Date</span>
-    <input class="date-1" type="date" name="check-in" >
-    <span class="date">check-out Date</span>
-    <input class="date-1" type="date" name="check-out" >
-    </div> -->
-
   <button type="submit" class="btn btn-primary"  value="submit" name="book">Book</button>
 </form>
 
 <?php
-
-
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
-} 
-  
+}  
 
 if(isset($_POST['book'])){
   $date = strtotime($_POST['check-in']);
@@ -504,24 +481,13 @@ if(isset($_POST['book'])){
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 $customer_id = $row["customer_id"];
-// $sql = "CALL get_customer_id_p('$username')";  
-// $result = $conn->query($sql);    
-// $row = $result->fetch_assoc();
-// $customer_id = $row["customer_id"]; 
-// echo $customer_id;
-// echo gettype($customer_id);
    $query = "INSERT INTO room_booked (`customer_id`,`check_in`,`check_out`,`total_days`,`room_no`) VALUES ('$customer_id','$checkin','$checkout','$days','$room_no')";
    $query_run=mysqli_query($conn,$query);
-
    if($query_run){
       echo '<script> alert("Room Booked"); </script>';
-
   }
   else{
-    
-    echo "<script> alert('$conn->error'); </script>";
-  
-      
+    echo "<script> alert('$conn->error'); </script>"; 
   }
 }
 $conn->close();
@@ -649,16 +615,12 @@ $payment_method=$_POST['payment_method'];
    $query_run=mysqli_query($conn,$query);
 
    if($query_run){
-      echo '<script> alert("Payment Done"); </script>';
-      
+      echo '<script> alert("Payment Done"); </script>';  
   }
   else{
-    
-      echo '<script> alert("Payment unsuccesful"); </script>';
-      
+      echo '<script> alert("Payment unsuccesful"); </script>';   
   }
 }
-
 ?>
   
 <?php
@@ -694,19 +656,15 @@ mysqli_close($conn);?>
   if(isset($_POST['delete'])){
   $room_no = $_POST['room_no'];
   $check_out = $_POST['check_out'];
-//   echo gettype($check_out);
-//   echo $check_out;
   $sql = "CALL cancel_booked_room('$room_no','$check_out')";
   $query_run=mysqli_query($conn,$sql);
 
   if($query_run){
-      echo '<script> alert("booking cancellation done."); </script>';   
-      
+      echo '<script> alert("booking cancellation done."); </script>';     
   }
   else{
-    
       echo "<script> alert('$conn->error'); </script>";
-     
+
   }
 }
 $conn->close();   
