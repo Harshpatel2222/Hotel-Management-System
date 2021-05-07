@@ -55,6 +55,6 @@ working on it.
  
  - 6 : Click on browse file and select “hotel-mangement-system.sql” file which is inside the “Hotel-Management-System” folder and Click ‘GO’.
  
- - 7 : Open a browser and go to URL http://localhost/Hotel-Management-System/customer.php”.
+ - 7 : Open a browser and go to URL “http://localhost/Hotel-Management-System/customer.php”.
  
  ***NOTE : For admin panel, go to URL” http://localhost/Hotel-Management-System/admin.php”***
