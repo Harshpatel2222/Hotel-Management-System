@@ -14,6 +14,26 @@ managing rooms, bookings, and payment are for the admin section. The design of t
 system is made as simple as possible so that the user won’t get any difficulties while 
 working on it.
 
+## ScreenShots
+
+### CUSTOMER FLOW CHART
+![Alt text](Screenshots/Flowchart_customer.png?raw=true "Title")
+
+### ADMIN FLOW CHART
+![Alt text](Screenshots/Flowchart_admin.png?raw=true "Title")
+
+### HOME PAGE
+![Alt text](Screenshots/customer1.png?raw=true "Title")
+
+### HOME PAGE
+![Alt text](Screenshots/customer2.png?raw=true "Title")
+
+### CUSTOMER PAGE
+![Alt text](Screenshots/customer3.png?raw=true "Title")
+
+### ADMIN PAGE
+![Alt text](Screenshots/admin1.png?raw=true "Title")
+
 
 
 ***NOTE : Please read installation and execution steps present at the bottom before downloading. Thank you***
