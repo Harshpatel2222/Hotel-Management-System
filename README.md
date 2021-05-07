@@ -21,11 +21,17 @@ working on it.
 ## Installtion and execution procedure
 
  -1 : Install XAMPP [Download XAMPP from here](https://www.apachefriends.org/download.html).
+ 
  -2 : After installing XAMPP (Default directory : c:/xampp/) , download the project and paste it in directory : (c:/xampp/htdocs/).
+ 
  -3 : Start Apache and MySQL server in XAMPP.
+ 
  -4 : Open a browser and go to phpMyAdmin page “http://localhost/phpmyadmin/”.
+ 
  -5 : Create a database naming “hotel-mangement-system” and then click on the import tab.
+ 
  -6 : Click on browse file and select “hotel-mangement-system.sql” file which is inside the “Hotel-Management-System” folder and Click ‘GO’.
+ 
  -7 : Open a browser and go to URL http://localhost/Hotel-Management-System/customer.php”.
  
  ***NOTE : For admin panel, go to URL” http://localhost/Hotel-Management-System/admin.php”***
